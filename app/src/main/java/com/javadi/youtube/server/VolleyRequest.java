@@ -1,12 +1,12 @@
 package com.javadi.youtube.server;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -14,19 +14,20 @@ import com.javadi.youtube.MainActivity;
 import com.javadi.youtube.PlayActivity;
 import com.javadi.youtube.adapters.VideoListAdapter;
 import com.javadi.youtube.models.Videos;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class VolleyRequest {
 
     Context mContext;
     RequestQueue requestQueue;
     static List<Videos> videosList=new ArrayList<>();
+    ProgressDialog progressDialog1;
+    ProgressDialog progressDialog2;
 
     public VolleyRequest(Context context){
         this.mContext=context;
@@ -37,16 +38,28 @@ public class VolleyRequest {
         StringRequest stringRequest=new StringRequest(Request.Method.GET,url+id, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                String ur=response;
-                PlayActivity.webView.loadUrl("http://javadi.herokuapp.com/?q="+response);
+                try{
+                    String ur=response;
+                    PlayActivity.webView.loadUrl("http://javadi.herokuapp.com/?q="+response);
+                    TimeUnit.SECONDS.sleep(2);
+                    progressDialog2.dismiss();
+                }catch (Exception e){
+                    e.printStackTrace();
+                    progressDialog2.dismiss();
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(mContext,error.getMessage().toString(),Toast.LENGTH_LONG).show();
+                progressDialog2.dismiss();
             }
         });
         Volley.newRequestQueue(mContext).add(stringRequest);
+        progressDialog2 = new ProgressDialog(mContext);
+        progressDialog2.setMessage("در حال دریافت اطلاعات ...");
+        progressDialog2.show();
     }
 
     public void requestVideoInfo(String query){
@@ -75,18 +88,23 @@ public class VolleyRequest {
                     }
                     MainActivity.videoListAdapter=new VideoListAdapter(mContext,videosList);
                     MainActivity.recyclerView.setAdapter(MainActivity.videoListAdapter);
+                    progressDialog1.dismiss();
                     //Toast.makeText(mContext,videosList.size()+"",Toast.LENGTH_LONG).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    progressDialog1.dismiss();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                progressDialog1.dismiss();
             }
         });
         Volley.newRequestQueue(mContext).add(jsonObjectRequest);
+        progressDialog1 = new ProgressDialog(mContext);
+        progressDialog1.setMessage("در حال دریافت اطلاعات ...");
+        progressDialog1.show();
     }
 
 }

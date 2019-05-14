@@ -1,11 +1,15 @@
 package com.javadi.youtube;
 
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -18,87 +22,150 @@ import com.javadi.youtube.server.VolleyRequest;
 public class PlayActivity extends AppCompatActivity {
 
     public static WebView webView;
+    private FrameLayout customViewContainer;
+    private WebChromeClient.CustomViewCallback customViewCallback;
+    private View mCustomView;
+    private myWebChromeClient mWebChromeClient;
+    private myWebViewClient mWebViewClient;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
 
-        webView=(WebView)findViewById(R.id.web_view);
-        webView.setWebChromeClient(new MyChrome());
+        customViewContainer = (FrameLayout) findViewById(R.id.customViewContainer);
+        webView = (WebView) findViewById(R.id.web_view);
+
+        mWebViewClient = new myWebViewClient();
+        webView.setWebViewClient(mWebViewClient);
+
+        mWebChromeClient = new myWebChromeClient();
+        webView.setWebChromeClient(mWebChromeClient);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setPluginState(WebSettings.PluginState.ON);
-        webView.getSettings().setAllowFileAccess(true);
-        webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setAppCacheEnabled(true);
-        webView.setWebViewClient(new Browser_home());
-        webView.setWebChromeClient(new WebChromeClient());
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setSaveFormData(true);
+
 
         String video_id=getIntent().getStringExtra("video_id");
         new VolleyRequest(this).requestVideoStream(video_id);
     }
 
-    class MyChrome extends WebChromeClient{
-        private View mCustomView;
-        private WebChromeClient.CustomViewCallback mCustomViewCallback;
-        protected FrameLayout mFullscreenContainer;
-        private int mOriginalOrientation;
-        private int mOriginalSystemUiVisibility;
+    public boolean inCustomView() {
+        return (mCustomView != null);
+    }
 
-        MyChrome() {}
+    public void hideCustomView() {
+        mWebChromeClient.onHideCustomView();
+    }
 
-        public Bitmap getDefaultVideoPoster()
-        {
-            if (mCustomView == null) {
-                return null;
+    @Override
+    protected void onPause() {
+        super.onPause();    //To change body of overridden methods use File | Settings | File Templates.
+        webView.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();    //To change body of overridden methods use File | Settings | File Templates.
+        webView.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();    //To change body of overridden methods use File | Settings | File Templates.
+        if (inCustomView()) {
+            hideCustomView();
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            if (inCustomView()) {
+                hideCustomView();
+                return true;
             }
-            return BitmapFactory.decodeResource(getApplicationContext().getResources(), 2130837573);
+
+            if ((mCustomView == null) && webView.canGoBack()) {
+                webView.goBack();
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    class myWebChromeClient extends WebChromeClient {
+        private Bitmap mDefaultVideoPoster;
+        private View mVideoProgressView;
+
+        @Override
+        public void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback) {
+            onShowCustomView(view, callback);    //To change body of overridden methods use File | Settings | File Templates.
         }
 
-        public void onHideCustomView()
-        {
-            ((FrameLayout)getWindow().getDecorView()).removeView(this.mCustomView);
-            this.mCustomView = null;
-            getWindow().getDecorView().setSystemUiVisibility(this.mOriginalSystemUiVisibility);
-            setRequestedOrientation(this.mOriginalOrientation);
-            this.mCustomViewCallback.onCustomViewHidden();
-            this.mCustomViewCallback = null;
-        }
+        @Override
+        public void onShowCustomView(View view,CustomViewCallback callback) {
 
-        public void onShowCustomView(View paramView, WebChromeClient.CustomViewCallback paramCustomViewCallback)
-        {
-            if (this.mCustomView != null)
-            {
-                onHideCustomView();
+            // if a view already exists then immediately terminate the new one
+            if (mCustomView != null) {
+                callback.onCustomViewHidden();
                 return;
             }
-            this.mCustomView = paramView;
-            this.mOriginalSystemUiVisibility = getWindow().getDecorView().getSystemUiVisibility();
-            this.mOriginalOrientation = getRequestedOrientation();
-            this.mCustomViewCallback = paramCustomViewCallback;
-            ((FrameLayout)getWindow().getDecorView()).addView(this.mCustomView, new FrameLayout.LayoutParams(-1, -1));
-            getWindow().getDecorView().setSystemUiVisibility(3846);
-        }
-    }
-
-    class Browser_home extends WebViewClient {
-
-        Browser_home() {
+            mCustomView = view;
+            webView.setVisibility(View.GONE);
+            customViewContainer.setVisibility(View.VISIBLE);
+            customViewContainer.addView(view);
+            customViewCallback = callback;
         }
 
         @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            super.onPageStarted(view, url, favicon);
+        public View getVideoLoadingProgressView() {
 
+            if (mVideoProgressView == null) {
+                LayoutInflater inflater = LayoutInflater.from(PlayActivity.this);
+                mVideoProgressView = inflater.inflate(R.layout.video_progress, null);
+            }
+            return mVideoProgressView;
         }
 
         @Override
-        public void onPageFinished(WebView view, String url) {
-            setTitle(view.getTitle());
-            //progressBar.setVisibility(View.GONE);
-            super.onPageFinished(view, url);
+        public void onHideCustomView() {
+            super.onHideCustomView();    //To change body of overridden methods use File | Settings | File Templates.
+            if (mCustomView == null)
+                return;
 
+            webView.setVisibility(View.VISIBLE);
+            customViewContainer.setVisibility(View.GONE);
+
+            // Hide the custom view.
+            mCustomView.setVisibility(View.GONE);
+
+            // Remove the custom view from its container.
+            customViewContainer.removeView(mCustomView);
+            customViewCallback.onCustomViewHidden();
+
+            mCustomView = null;
         }
     }
 
+    class myWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            return super.shouldOverrideUrlLoading(view, url);    //To change body of overridden methods use File | Settings | File Templates.
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        }
+    }
 }
