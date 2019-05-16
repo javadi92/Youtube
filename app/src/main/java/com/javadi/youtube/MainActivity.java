@@ -5,8 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -64,6 +66,16 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setPluginState(WebSettings.PluginState.ON);
         webView.setWebViewClient(new WebViewClient());
         webView.setWebChromeClient(new WebChromeClient());*/
+        etSearch.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode==KeyEvent.KEYCODE_ENTER){
+                    search();
+                    hideKeyboard();
+                }
+                return false;
+            }
+        });
         clickManager();
     }
 
@@ -71,16 +83,22 @@ public class MainActivity extends AppCompatActivity {
         imgSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!etSearch.getText().toString().equals("")){
-                    //videoList=new VolleyRequest(MainActivity.this).requestVideoInfo(key1+etSearch.getText().toString()+key2);
-                    //Toast.makeText(MainActivity.this,videoList.size()+"",Toast.LENGTH_LONG).show();
-                    //videoListAdapter=new VideoListAdapter(MainActivity.this,videoList);
-                    //recyclerView.setAdapter(videoListAdapter);
-                    new VolleyRequest(MainActivity.this).requestVideoInfo(etSearch.getText().toString());
-                }
-
+                search();
+                hideKeyboard();
             }
         });
+    }
+
+    //hide keyboard
+    private void hideKeyboard(){
+        InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
+
+    private void search(){
+        if(!etSearch.getText().toString().equals("")){
+            new VolleyRequest(MainActivity.this).requestVideoInfo(etSearch.getText().toString());
+        }
     }
 }
 

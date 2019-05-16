@@ -40,8 +40,9 @@ public class VolleyRequest {
             public void onResponse(String response) {
                 try{
                     String ur=response;
-                    PlayActivity.webView.loadUrl("http://javadi.herokuapp.com/?q="+response);
-                    TimeUnit.SECONDS.sleep(2);
+                    //PlayActivity.webView.loadUrl("http://javadi.herokuapp.com/?q="+response);
+                    PlayActivity.videoView.setVideoPath("http://javadi.herokuapp.com/?q="+response);
+                    TimeUnit.SECONDS.sleep(4);
                     progressDialog2.dismiss();
                 }catch (Exception e){
                     e.printStackTrace();
@@ -79,7 +80,7 @@ public class VolleyRequest {
                         JSONObject object2=object1.getJSONObject("snippet");
                         String title=object2.getString("title");
                         JSONObject object3=object2.getJSONObject("thumbnails");
-                        JSONObject object4=object3.getJSONObject("high");
+                        JSONObject object4=object3.getJSONObject("default");
                         String url_path="http://javadi.herokuapp.com/?q="+object4.getString("url");
                         videos.setVideo_title(title);
                         videos.setVideo_id(video_id);
