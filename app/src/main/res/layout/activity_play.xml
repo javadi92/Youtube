@@ -8,26 +8,7 @@
     android:layout_height="fill_parent"
     >
 
-    <FrameLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
-        <VideoView
-            android:id="@+id/videoView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </FrameLayout>
-
-
-
-    <!--<WebView
+    <WebView
         android:id="@+id/web_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -36,8 +17,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-       -->
-    <!--<LinearLayout
+
+    <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="0dp"
         android:layout_height="1dp"
@@ -46,7 +27,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"></LinearLayout>
-       -->
+
 
 
 </android.support.constraint.ConstraintLayout>

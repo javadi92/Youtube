@@ -19,34 +19,30 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 public class VolleyRequest {
 
     Context mContext;
     RequestQueue requestQueue;
     static List<Videos> videosList=new ArrayList<>();
     ProgressDialog progressDialog1;
-    ProgressDialog progressDialog2;
+    private static boolean out=false;
 
     public VolleyRequest(Context context){
         this.mContext=context;
     }
 
-    public void requestVideoStream(String id){
-        String url="https://fetchurl.herokuapp.com/?id=";
+    public void requestVideoStream(final String id){
+        final String url="https://fetchurl.herokuapp.com/?id=";
         StringRequest stringRequest=new StringRequest(Request.Method.GET,url+id, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try{
                     String ur=response;
-                    //PlayActivity.webView.loadUrl("http://javadi.herokuapp.com/?q="+response);
-                    PlayActivity.videoView.setVideoPath("http://javadi.herokuapp.com/?q="+response);
-                    TimeUnit.SECONDS.sleep(4);
-                    progressDialog2.dismiss();
+                    PlayActivity.webView.loadUrl("http://javadi.herokuapp.com/?q="+response);
+                    PlayActivity.progressDialog2.dismiss();
                 }catch (Exception e){
                     e.printStackTrace();
-                    progressDialog2.dismiss();
+                    PlayActivity.progressDialog2.dismiss();
                 }
 
             }
@@ -54,13 +50,11 @@ public class VolleyRequest {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(mContext,error.getMessage().toString(),Toast.LENGTH_LONG).show();
-                progressDialog2.dismiss();
+                PlayActivity.progressDialog2.dismiss();
             }
         });
         Volley.newRequestQueue(mContext).add(stringRequest);
-        progressDialog2 = new ProgressDialog(mContext);
-        progressDialog2.setMessage("در حال دریافت اطلاعات ...");
-        progressDialog2.show();
+
     }
 
     public void requestVideoInfo(String query){
@@ -72,6 +66,8 @@ public class VolleyRequest {
                 try {
                     JSONArray jsonArray=response.getJSONArray("items");
                     videosList.clear();
+                    //int start=MainActivity.index;
+                    //int last=MainActivity.end;
                     for(int i=0;i<jsonArray.length();i++){
                         Videos videos=new Videos();
                         JSONObject object1= (JSONObject) jsonArray.get(i);
@@ -85,10 +81,18 @@ public class VolleyRequest {
                         videos.setVideo_title(title);
                         videos.setVideo_id(video_id);
                         videos.setImage_url_path(url_path);
+
                         videosList.add(videos);
+
                     }
-                    MainActivity.videoListAdapter=new VideoListAdapter(mContext,videosList);
-                    MainActivity.recyclerView.setAdapter(MainActivity.videoListAdapter);
+                    //MainActivity.videoListAdapter=new VideoListAdapter(mContext,videosList);
+                    //MainActivity.recyclerView.setAdapter(MainActivity.videoListAdapter);
+                    //MainActivity.lazyLoadAdapter=new LazyLoadAdapter(MainActivity.recyclerView,videosList,mContext);
+                    //MainActivity.recyclerView.setAdapter(MainActivity.lazyLoadAdapter);
+                    /*if(MainActivity.lazyLoadAdapter.isLoading){
+                        MainActivity.lazyLoadAdapter.notifyDataSetChanged();
+                        MainActivity.lazyLoadAdapter .setLoaded();
+                    }*/
                     progressDialog1.dismiss();
                     //Toast.makeText(mContext,videosList.size()+"",Toast.LENGTH_LONG).show();
                 } catch (JSONException e) {
@@ -108,4 +112,22 @@ public class VolleyRequest {
         progressDialog1.show();
     }
 
+    private boolean checkVideo(String video_id){
+        String url="http://fetchurl.herokuapp.com/?id=";
+        StringRequest request=new StringRequest(Request.Method.GET, url + video_id, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if(!response.equals("false")){
+                    out=true;
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        Volley.newRequestQueue(mContext).add(request);
+        return out;
+    }
 }

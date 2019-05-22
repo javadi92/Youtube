@@ -9,12 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.javadi.youtube.PlayActivity;
 import com.javadi.youtube.R;
 import com.javadi.youtube.models.Videos;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +21,12 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.mVie
     List<Videos> videosList =new ArrayList<>();
     Context mContext;
 
+
     public VideoListAdapter(Context context,List<Videos> videosList){
         this.mContext=context;
         this.videosList = videosList;
     }
+
 
     @NonNull
     @Override
