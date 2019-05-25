@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
@@ -20,6 +21,11 @@ import com.javadi.youtube.models.Videos;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,10 +86,10 @@ public class MainActivity extends AppCompatActivity {
         if(!etSearch.getText().toString().equals("")){
             //new VolleyRequest(MainActivity.this).requestVideoInfo(URLEncoder.encode(etSearch.getText().toString()));
             //requestVideoInfo(URLEncoder.encode(etSearch.getText().toString()));
-            requestVideoInfoScraping(URLEncoder.encode(etSearch.getText().toString()));
+            //requestVideoInfoScraping(URLEncoder.encode(etSearch.getText().toString()));
+            jsoupRequestVideoInfo(URLEncoder.encode(etSearch.getText().toString()));
             progressDialog.setMessage("در حال دریافت اطلاعات ...");
             progressDialog.show();
-            //Toast.makeText(MainActivity.this,videosList.size()+"",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -161,6 +167,46 @@ public class MainActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                 });
+    }
+    public void jsoupRequestVideoInfo(final String query){
+        new Thread(){
+            @Override
+            public void run() {
+                //super.run();
+                String url = "https://www.google.com/search?q="+query+"+site:youtube.com&tbm=vid&start=10";
+                Document document = null;
+                try {
+                    videosList.clear();
+                    document = Jsoup.connect(url).get();
+                    final Elements links = document.select("a[href]");
+                    final Elements titles=document.select("h3");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Toast.makeText(MainActivity.this,title.toString(),Toast.LENGTH_LONG).show();
+                            for(int i=0;i<links.size();i=i+2){
+                                if(links.get(i).attr("href").contains("https://www.youtube.com/watch?v=")){
+                                    Videos videos=new Videos();
+                                    String temp=links.get(i).attr("href");
+                                    if((i/2)<10){
+                                        videos.setVideo_title(titles.get(i/2).text());
+                                    }
+                                    String video_id=temp.substring(temp.indexOf("?v=")+3);
+                                    videos.setVideo_id(video_id);
+                                    videos.setImage_url_path("https://antifilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/default.jpg");
+                                    videosList.add(videos);
+                                }
+                            }
+                            videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
+                            recyclerView.setAdapter(videoListAdapter);
+                            progressDialog.dismiss();
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 }
 
