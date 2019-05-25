@@ -1,5 +1,6 @@
 package com.javadi.youtube;
 
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,9 +13,8 @@ import android.widget.ImageView;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.androidnetworking.interfaces.StringRequestListener;
-import com.javadi.youtube.adapters.LazyLoadAdapter;
 import com.javadi.youtube.adapters.VideoListAdapter;
 import com.javadi.youtube.models.Videos;
 import org.json.JSONArray;
@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     VideoListAdapter videoListAdapter;
     List<Videos> videosList=new ArrayList<>();
     private static boolean check=true;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         etSearch=(EditText)findViewById(R.id.et_search);
         recyclerView=(RecyclerView)findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        progressDialog = new ProgressDialog(this);
 
         etSearch.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -76,15 +79,18 @@ public class MainActivity extends AppCompatActivity {
     private void search(){
         if(!etSearch.getText().toString().equals("")){
             //new VolleyRequest(MainActivity.this).requestVideoInfo(URLEncoder.encode(etSearch.getText().toString()));
-            requestVideoInfo(URLEncoder.encode(etSearch.getText().toString()));
+            //requestVideoInfo(URLEncoder.encode(etSearch.getText().toString()));
+            requestVideoInfoScraping(URLEncoder.encode(etSearch.getText().toString()));
+            progressDialog.setMessage("در حال دریافت اطلاعات ...");
+            progressDialog.show();
+            //Toast.makeText(MainActivity.this,videosList.size()+"",Toast.LENGTH_LONG).show();
         }
     }
 
-
     public void requestVideoInfo(String query){
-        String url="http://v3-json.herokuapp.com/?query=";
+        String url="https://v3json.herokuapp.com/?query=";
         AndroidNetworking.get(url+query)
-                .setPriority(Priority.MEDIUM)
+                .setPriority(Priority.HIGH)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
@@ -101,47 +107,60 @@ public class MainActivity extends AppCompatActivity {
                                 String title=object2.getString("title");
                                 JSONObject object3=object2.getJSONObject("thumbnails");
                                 JSONObject object4=object3.getJSONObject("default");
-                                String url_path="http://javadi.herokuapp.com/?q="+object4.getString("url");
+                                String url_path="https://antifilter.herokuapp.com/?q="+object4.getString("url");
                                 videos.setVideo_title(title);
                                 videos.setVideo_id(video_id);
                                 videos.setImage_url_path(url_path);
                                 videosList.add(videos);
                             }
                             videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
-                            videoListAdapter.notifyDataSetChanged();
                             recyclerView.setAdapter(videoListAdapter);
-                            check=true;
+                            //progressDialog.dismiss();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            //progressDialog1.dismiss();
+                            //progressDialog.dismiss();
                         }
                     }
-
                     @Override
                     public void onError(ANError anError) {
-
+                        //progressDialog.dismiss();
                     }
                 });
     }
 
-    private boolean checkVideo(String video_id){
-        String url2="http://fetchurl.herokuapp.com/?id=";
-        AndroidNetworking.get(url2+video_id)
-                .setPriority(Priority.IMMEDIATE)
+    public void requestVideoInfoScraping(String query){
+        String url="https://scrape-youtube.herokuapp.com/?search=";
+        AndroidNetworking.get(url+query)
+                .setPriority(Priority.HIGH)
                 .build()
-                .getAsString(new StringRequestListener() {
+                .getAsJSONArray(new JSONArrayRequestListener() {
                     @Override
-                    public void onResponse(String response) {
-                        if (!response.equals("false")){
-                            check=false;
+                    public void onResponse(JSONArray response) {
+                        try{
+                            videosList.clear();
+                            for(int i=0;i<response.length();i++){
+                                Videos videos=new Videos();
+                                JSONArray jsonArray=response.getJSONArray(i);
+                                String title=jsonArray.getString(0);
+                                String video_id=jsonArray.getString(1);
+                                videos.setVideo_id(video_id);
+                                videos.setVideo_title(title);
+                                videos.setImage_url_path("https://antifilter.herokuapp.com/?q="+"https://img.youtube.com/vi/"+video_id+"/default.jpg");
+                                videosList.add(videos);
+                            }
+                            videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
+                            recyclerView.setAdapter(videoListAdapter);
+                            progressDialog.dismiss();
+                        }catch (JSONException e){
+                            progressDialog.dismiss();
                         }
                     }
+
                     @Override
                     public void onError(ANError anError) {
-
+                        progressDialog.dismiss();
                     }
                 });
-        return check;
     }
 }
 

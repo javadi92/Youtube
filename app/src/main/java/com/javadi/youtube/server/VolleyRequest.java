@@ -25,6 +25,7 @@ public class VolleyRequest {
     RequestQueue requestQueue;
     static List<Videos> videosList=new ArrayList<>();
     ProgressDialog progressDialog1;
+    RequestQueue queue;
     private static boolean out=false;
 
     public VolleyRequest(Context context){
@@ -38,7 +39,7 @@ public class VolleyRequest {
             public void onResponse(String response) {
                 try{
                     String ur=response;
-                    PlayActivity.webView.loadUrl("http://javadi.herokuapp.com/?q="+response);
+                    PlayActivity.webView.loadUrl("http://antifilter.herokuapp.com/?q="+response);
                     PlayActivity.progressDialog2.dismiss();
                 }catch (Exception e){
                     e.printStackTrace();
@@ -58,7 +59,7 @@ public class VolleyRequest {
     }
 
     public void requestVideoInfo(String query){
-        String url="http://v3-json.herokuapp.com/?query=";
+        String url="http://v3json.herokuapp.com/?query=";
 
         JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.POST, url+query, null, new Response.Listener<JSONObject>() {
             @Override
@@ -81,18 +82,13 @@ public class VolleyRequest {
                         videos.setVideo_title(title);
                         videos.setVideo_id(video_id);
                         videos.setImage_url_path(url_path);
-
                         videosList.add(videos);
-
                     }
                     //MainActivity.videoListAdapter=new VideoListAdapter(mContext,videosList);
                     //MainActivity.recyclerView.setAdapter(MainActivity.videoListAdapter);
                     //MainActivity.lazyLoadAdapter=new LazyLoadAdapter(MainActivity.recyclerView,videosList,mContext);
                     //MainActivity.recyclerView.setAdapter(MainActivity.lazyLoadAdapter);
-                    /*if(MainActivity.lazyLoadAdapter.isLoading){
-                        MainActivity.lazyLoadAdapter.notifyDataSetChanged();
-                        MainActivity.lazyLoadAdapter .setLoaded();
-                    }*/
+
                     progressDialog1.dismiss();
                     //Toast.makeText(mContext,videosList.size()+"",Toast.LENGTH_LONG).show();
                 } catch (JSONException e) {

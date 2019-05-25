@@ -16,7 +16,19 @@ import android.webkit.WebViewClient;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
-import com.javadi.youtube.server.VolleyRequest;
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.androidnetworking.interfaces.StringRequestListener;
+import com.javadi.youtube.adapters.VideoListAdapter;
+import com.javadi.youtube.models.Videos;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+//import com.javadi.youtube.server.VolleyRequest;
 
 public class PlayActivity extends AppCompatActivity {
 
@@ -58,7 +70,10 @@ public class PlayActivity extends AppCompatActivity {
         }
 
         String video_id=getIntent().getStringExtra("video_id");
-        new VolleyRequest(this).requestVideoStream(video_id);
+        //new VolleyRequest(this).requestVideoStream(video_id);
+        requestVideoStream(video_id);
+
+
         //videoView.start();
 
         /*videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -88,5 +103,24 @@ public class PlayActivity extends AppCompatActivity {
             //videoView.getLayoutParams().height= ViewGroup.LayoutParams.WRAP_CONTENT;
 
         }
+    }
+
+    private void requestVideoStream(String query){
+        final String url="https://fetchurls.herokuapp.com/?id=";
+        AndroidNetworking.get(url+query)
+                .setPriority(Priority.LOW)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        webView.loadUrl("https://antifilter.herokuapp.com/?q="+response);
+                        progressDialog2.dismiss();
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        progressDialog2.dismiss();
+                    }
+                });
     }
 }
