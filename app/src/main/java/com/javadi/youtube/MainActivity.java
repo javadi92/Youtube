@@ -184,17 +184,17 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             //Toast.makeText(MainActivity.this,title.toString(),Toast.LENGTH_LONG).show();
+                            int count=0;
                             for(int i=0;i<links.size();i=i+2){
                                 if(links.get(i).attr("href").contains("https://www.youtube.com/watch?v=")){
                                     Videos videos=new Videos();
                                     String temp=links.get(i).attr("href");
-                                    if((i/2)<10){
-                                        videos.setVideo_title(titles.get(i/2).text());
-                                    }
+                                    videos.setVideo_title(titles.get(count).text());
                                     String video_id=temp.substring(temp.indexOf("?v=")+3);
                                     videos.setVideo_id(video_id);
                                     videos.setImage_url_path("https://antifilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/default.jpg");
                                     videosList.add(videos);
+                                    count++;
                                 }
                             }
                             videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
