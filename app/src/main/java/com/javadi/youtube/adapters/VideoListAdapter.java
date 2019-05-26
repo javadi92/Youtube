@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.javadi.youtube.PlayActivity;
 import com.javadi.youtube.R;
 import com.javadi.youtube.models.Videos;

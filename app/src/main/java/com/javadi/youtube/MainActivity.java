@@ -26,6 +26,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,9 +88,13 @@ public class MainActivity extends AppCompatActivity {
             //new VolleyRequest(MainActivity.this).requestVideoInfo(URLEncoder.encode(etSearch.getText().toString()));
             //requestVideoInfo(URLEncoder.encode(etSearch.getText().toString()));
             //requestVideoInfoScraping(URLEncoder.encode(etSearch.getText().toString()));
-            jsoupRequestVideoInfo(URLEncoder.encode(etSearch.getText().toString()));
-            progressDialog.setMessage("در حال دریافت اطلاعات ...");
-            progressDialog.show();
+            try {
+                jsoupRequestVideoInfo(URLEncoder.encode(etSearch.getText().toString(),"UTF-8"));
+                progressDialog.setMessage("در حال دریافت اطلاعات ...");
+                progressDialog.show();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -179,24 +184,35 @@ public class MainActivity extends AppCompatActivity {
                     videosList.clear();
                     document = Jsoup.connect(url).get();
                     final Elements links = document.select("a[href]");
+                    final Elements link = document.select("div[class=TbwUpd]");
                     final Elements titles=document.select("h3");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             //Toast.makeText(MainActivity.this,title.toString(),Toast.LENGTH_LONG).show();
-                            int count=0;
+                            /*int count=0;
                             for(int i=0;i<links.size();i=i+2){
                                 if(links.get(i).attr("href").contains("https://www.youtube.com/watch?v=")){
                                     Videos videos=new Videos();
                                     String temp=links.get(i).attr("href");
-                                    videos.setVideo_title(titles.get(count).text());
                                     String video_id=temp.substring(temp.indexOf("?v=")+3);
+                                    videos.setVideo_title(Jsoup.parse(titles.get(count).text(),"UTF-8").text());
                                     videos.setVideo_id(video_id);
                                     videos.setImage_url_path("https://antifilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/default.jpg");
                                     videosList.add(videos);
                                     count++;
                                 }
+                            }*/
+                            for(int i=0;i<link.size();i=i+1){
+                                Videos videos=new Videos();
+                                String temp=link.get(i).text();
+                                String video_id=temp.substring(temp.indexOf("?v=")+3);
+                                videos.setVideo_title(Jsoup.parse(titles.get(i).text(),"UTF-8").text());
+                                videos.setVideo_id(video_id);
+                                videos.setImage_url_path("https://antifilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/default.jpg");
+                                videosList.add(videos);
                             }
+                            //Toast.makeText(MainActivity.this,link.size()+"",Toast.LENGTH_SHORT).show();
                             videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
                             recyclerView.setAdapter(videoListAdapter);
                             progressDialog.dismiss();

@@ -2,6 +2,7 @@ package com.javadi.youtube;
 
 import android.app.ProgressDialog;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.javadi.youtube.adapters.VideoListAdapter;
 import com.javadi.youtube.models.Videos;
+import com.roger.catloadinglibrary.CatLoadingView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +35,7 @@ import org.json.JSONObject;
 public class PlayActivity extends AppCompatActivity {
 
     public static WebView webView;
+    CatLoadingView mView;
     //public static VideoView videoView;
     //public static MediaController videoMediaController;
     public static ProgressDialog progressDialog2;
@@ -42,12 +45,24 @@ public class PlayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
 
-        progressDialog2 = new ProgressDialog(this);
-        progressDialog2.setMessage("در حال دریافت اطلاعات ...");
-        progressDialog2.show();
+        mView = new CatLoadingView();
+        mView.setCanceledOnTouchOutside(false);
+        mView.setText("...");
+        mView.show(getSupportFragmentManager(), "");
+        //progressDialog2 = new ProgressDialog(this);
+        //progressDialog2.setMessage("در حال دریافت اطلاعات ...");
+        //progressDialog2.show();
 
         webView = (WebView) findViewById(R.id.web_view);
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                //progressDialog2.dismiss();
+                mView.dismiss();
+            }
+
+        });
         webView.setWebChromeClient(new WebChromeClient());
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setAppCacheEnabled(true);
@@ -114,7 +129,6 @@ public class PlayActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         webView.loadUrl("https://antifilter.herokuapp.com/?q="+response);
-                        progressDialog2.dismiss();
                     }
 
                     @Override
