@@ -1,6 +1,5 @@
 package com.javadi.youtube.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -12,13 +11,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.javadi.youtube.OnLoadMoreListener;
 import com.javadi.youtube.PlayActivity;
 import com.javadi.youtube.R;
 import com.javadi.youtube.models.Videos;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
 
 

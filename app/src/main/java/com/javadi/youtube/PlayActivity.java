@@ -15,6 +15,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.MediaController;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.androidnetworking.AndroidNetworking;
@@ -30,6 +31,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Random;
+
 //import com.javadi.youtube.server.VolleyRequest;
 
 public class PlayActivity extends AppCompatActivity {
@@ -39,6 +42,7 @@ public class PlayActivity extends AppCompatActivity {
     //public static VideoView videoView;
     //public static MediaController videoMediaController;
     public static ProgressDialog progressDialog2;
+    int distributed=0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,7 +51,7 @@ public class PlayActivity extends AppCompatActivity {
 
         mView = new CatLoadingView();
         mView.setCanceledOnTouchOutside(false);
-        mView.setText("...");
+        mView.setText("");
         mView.show(getSupportFragmentManager(), "");
         //progressDialog2 = new ProgressDialog(this);
         //progressDialog2.setMessage("در حال دریافت اطلاعات ...");
@@ -86,7 +90,16 @@ public class PlayActivity extends AppCompatActivity {
 
         String video_id=getIntent().getStringExtra("video_id");
         //new VolleyRequest(this).requestVideoStream(video_id);
-        requestVideoStream(video_id);
+
+        if(distributed==0){
+            requestVideoStream(video_id);
+            distributed=1;
+        }
+        else if(distributed==1){
+            requestVideoStream2(video_id);
+            distributed=0;
+        }
+
 
 
         //videoView.start();
@@ -129,6 +142,24 @@ public class PlayActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         webView.loadUrl("https://antifilter.herokuapp.com/?q="+response);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        progressDialog2.dismiss();
+                    }
+                });
+    }
+
+    private void requestVideoStream2(String query){
+        final String url="https://url-fetch.herokuapp.com/?id=";
+        AndroidNetworking.get(url+query)
+                .setPriority(Priority.LOW)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        webView.loadUrl("https://youtube-withoutfilter.herokuapp.com/?q="+response);
                     }
 
                     @Override

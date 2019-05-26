@@ -1,6 +1,6 @@
 package com.javadi.youtube.server;
 
-import android.app.ProgressDialog;
+/*import android.app.ProgressDialog;
 import android.content.Context;
 import android.widget.Toast;
 import com.android.volley.Request;
@@ -18,8 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.List;
-public class VolleyRequest {
+import java.util.List;*/
+/*public class VolleyRequest {
 
     Context mContext;
     RequestQueue requestQueue;
@@ -126,4 +126,4 @@ public class VolleyRequest {
         Volley.newRequestQueue(mContext).add(request);
         return out;
     }
-}
+}*/
