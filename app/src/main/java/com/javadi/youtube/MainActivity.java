@@ -31,10 +31,9 @@ public class MainActivity extends AppCompatActivity {
     ImageView imgSearch;
     EditText etSearch;
     RecyclerView recyclerView;
-    VideoListAdapter videoListAdapter;
+    static VideoListAdapter videoListAdapter;
     LazyLoadAdapter lazyLoadAdapter;
-    List<Videos> videosList=new ArrayList<>();
-    private static boolean check=true;
+    static List<Videos> videosList=new ArrayList<>();
     ProgressDialog progressDialog;
     int distributed=0;
 
@@ -143,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
                             recyclerView.setAdapter(videoListAdapter);
+                            recyclerView.scrollToPosition(videosList.size()-10);
                             progressDialog.dismiss();
                         }
                     });
@@ -179,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
                             recyclerView.setAdapter(videoListAdapter);
+                            recyclerView.scrollToPosition(videosList.size()-10);
                             progressDialog.dismiss();
                         }
                     });
