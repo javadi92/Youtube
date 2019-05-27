@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import com.javadi.youtube.adapters.LazyLoadAdapter;
 import com.javadi.youtube.adapters.VideoListAdapter;
 import com.javadi.youtube.models.Videos;
@@ -78,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 videosList.clear();
+                videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
+                videoListAdapter.notifyDataSetChanged();
                 search(0);
                 hideKeyboard();
             }
