@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 import com.javadi.youtube.PlayActivity;
 import com.javadi.youtube.R;
 import com.javadi.youtube.models.Videos;
@@ -37,7 +39,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.mVie
 
     @Override
     public void onBindViewHolder(@NonNull mViewHolder mViewHolder, final int i) {
-        Picasso.get().load(videosList.get(i).getImage_url_path()).fit().centerInside().into(mViewHolder.imgVideoholder);
+        //Picasso.get().load(videosList.get(i).getImage_url_path()).fit().centerInside().into(mViewHolder.imgVideoholder);
+        Glide.with(mContext).load(videosList.get(i).getImage_url_path()).into(mViewHolder.imgVideoholder);
         mViewHolder.tvVideoHolderTitle.setText(videosList.get(i).getVideo_title());
         mViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

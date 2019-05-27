@@ -26,6 +26,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    //views
     ImageView imgSearch;
     EditText etSearch;
     RecyclerView recyclerView;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     LazyLoadAdapter lazyLoadAdapter;
     static List<Videos> videosList=new ArrayList<>();
     ProgressDialog progressDialog;
+    //for distribute servers
     int distributed=0;
 
     @Override
@@ -40,11 +42,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //init views
         imgSearch=(ImageView)findViewById(R.id.img_search);
         etSearch=(EditText)findViewById(R.id.et_search);
         recyclerView=(RecyclerView)findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        //add listener for recyclerview for detect more laod
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
@@ -75,9 +79,6 @@ public class MainActivity extends AppCompatActivity {
         imgSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                videosList.clear();
-                videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
-                videoListAdapter.notifyDataSetChanged();
                 search(0);
                 hideKeyboard();
             }
@@ -91,6 +92,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void search(final int s){
+        if(s==0){
+            videosList.clear();
+            videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
+            recyclerView.setAdapter(videoListAdapter);
+        }
         if(!etSearch.getText().toString().equals("")){
             if(distributed==0){
                 try {
@@ -104,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             }
             else if(distributed==1){
                 try {
-                    jsoupRequestVideoInfo2(URLEncoder.encode(etSearch.getText().toString(),"UTF-8"),0);
+                    jsoupRequestVideoInfo2(URLEncoder.encode(etSearch.getText().toString(),"UTF-8"),s);
                     progressDialog.setMessage("در حال دریافت اطلاعات ...");
                     progressDialog.show();
                 } catch (UnsupportedEncodingException e) {
@@ -137,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                                 String video_id=temp.substring(temp.indexOf("?v=")+3);
                                 videos.setVideo_title(Jsoup.parse(titles.get(i).text(),"UTF-8").text());
                                 videos.setVideo_id(video_id);
-                                videos.setImage_url_path("https://antifilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/default.jpg");
+                                videos.setImage_url_path("https://antifilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/mqdefault.jpg");
                                 videosList.add(videos);
                             }
                             videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
@@ -174,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                                 String video_id=temp.substring(temp.indexOf("?v=")+3);
                                 videos.setVideo_title(Jsoup.parse(titles.get(i).text(),"UTF-8").text());
                                 videos.setVideo_id(video_id);
-                                videos.setImage_url_path("https://youtube-withoutfilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/default.jpg");
+                                videos.setImage_url_path("https://youtube-withoutfilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/mqdefault.jpg");
                                 videosList.add(videos);
                             }
                             videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
