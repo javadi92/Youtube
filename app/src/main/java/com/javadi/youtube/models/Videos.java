@@ -5,6 +5,16 @@ public class Videos {
     private String video_title="";
     private String video_id="";
 
+    public String getVideo_duration() {
+        return video_duration;
+    }
+
+    public void setVideo_duration(String video_duration) {
+        this.video_duration = video_duration;
+    }
+
+    private String video_duration="";
+
     public String getVideo_id() {
         return video_id;
     }

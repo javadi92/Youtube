@@ -39,9 +39,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.mVie
 
     @Override
     public void onBindViewHolder(@NonNull mViewHolder mViewHolder, final int i) {
-        //Picasso.get().load(videosList.get(i).getImage_url_path()).fit().centerInside().into(mViewHolder.imgVideoholder);
-        Glide.with(mContext).load(videosList.get(i).getImage_url_path()).into(mViewHolder.imgVideoholder);
+        Picasso.get().load(videosList.get(i).getImage_url_path()).fit().centerInside().into(mViewHolder.imgVideoholder);
+        //Glide.with(mContext).load(videosList.get(i).getImage_url_path()).into(mViewHolder.imgVideoholder);
         mViewHolder.tvVideoHolderTitle.setText(videosList.get(i).getVideo_title());
+        mViewHolder.tvDuration.setText(videosList.get(i).getVideo_duration());
         mViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,12 +61,13 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.mVie
     class mViewHolder extends RecyclerView.ViewHolder{
 
         ImageView imgVideoholder;
-        TextView tvVideoHolderTitle;
+        TextView tvVideoHolderTitle,tvDuration;
 
         public mViewHolder(@NonNull View itemView) {
             super(itemView);
             imgVideoholder=(ImageView)itemView.findViewById(R.id.img_video_holder);
             tvVideoHolderTitle=(TextView)itemView.findViewById(R.id.tv_video_holder_title);
+            tvDuration=(TextView)itemView.findViewById(R.id.tv_duration);
         }
     }
 }

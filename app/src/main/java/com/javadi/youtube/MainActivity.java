@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                     final Elements links = document.select("a[href]");
                     final Elements link = document.select("div[class=TbwUpd]");
                     final Elements titles=document.select("h3");
+                    final Elements times=document.getElementsByClass("vdur mWTy7c");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -144,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
                                 videos.setVideo_title(Jsoup.parse(titles.get(i).text(),"UTF-8").text());
                                 videos.setVideo_id(video_id);
                                 videos.setImage_url_path("https://antifilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/mqdefault.jpg");
+                                videos.setVideo_duration(times.get(i).text());
                                 videosList.add(videos);
                             }
                             videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
@@ -171,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
                     final Elements links = document.select("a[href]");
                     final Elements link = document.select("div[class=TbwUpd]");
                     final Elements titles=document.select("h3");
+                    final Elements times=document.getElementsByClass("vdur mWTy7c");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -181,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
                                 videos.setVideo_title(Jsoup.parse(titles.get(i).text(),"UTF-8").text());
                                 videos.setVideo_id(video_id);
                                 videos.setImage_url_path("https://youtube-withoutfilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/mqdefault.jpg");
+                                videos.setVideo_duration(times.get(i).text());
                                 videosList.add(videos);
                             }
                             videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
