@@ -131,22 +131,23 @@ public class MainActivity extends AppCompatActivity {
                 Document document = null;
                 try {
                     document = Jsoup.connect(url).get();
-                    final Elements links = document.select("a[href]");
-                    final Elements link = document.select("div[class=TbwUpd]");
-                    final Elements titles=document.select("h3");
-                    final Elements times=document.getElementsByClass("vdur mWTy7c");
+                    final Elements divs=document.select("div[class=g]");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            for(int i=0;i<link.size();i=i+1){
-                                Videos videos=new Videos();
-                                String temp=link.get(i).text();
-                                String video_id=temp.substring(temp.indexOf("?v=")+3);
-                                videos.setVideo_title(Jsoup.parse(titles.get(i).text(),"UTF-8").text());
-                                videos.setVideo_id(video_id);
-                                videos.setImage_url_path("https://antifilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/mqdefault.jpg");
-                                videos.setVideo_duration(times.get(i).text());
-                                videosList.add(videos);
+                            for(int i=0;i<divs.size();i=i+1){
+                                if(divs.get(i).select("div[class=rc]").select("div[class=s]").select("div").hasClass("th N3nEGc i0PvJb")){
+                                    Videos videos=new Videos();
+                                    String title=divs.get(i).select("div[class=rc]").select("div[class=r]").select("a").select("h3").text();
+                                    String temp=divs.get(i).select("div[class=rc]").select("div[class=r]").select("a").select("div[class=TbwUpd]").text();
+                                    String duration=divs.get(i).select("div[class=rc]").select("div[class=s]").select("div").select("div[class=th N3nEGc i0PvJb]").select("a").select("span[class=vdur mWTy7c]").text();
+                                    videos.setVideo_title(title);
+                                    String video_id=temp.substring(temp.indexOf("?v=")+3);
+                                    videos.setVideo_id(video_id);
+                                    videos.setImage_url_path("https://antifilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/mqdefault.jpg");
+                                    videos.setVideo_duration(duration);
+                                    videosList.add(videos);
+                                }
                             }
                             videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
                             recyclerView.setAdapter(videoListAdapter);
@@ -170,22 +171,23 @@ public class MainActivity extends AppCompatActivity {
                 Document document = null;
                 try {
                     document = Jsoup.connect(url).get();
-                    final Elements links = document.select("a[href]");
-                    final Elements link = document.select("div[class=TbwUpd]");
-                    final Elements titles=document.select("h3");
-                    final Elements times=document.getElementsByClass("vdur mWTy7c");
+                    final Elements divs=document.select("div[class=g]");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            for(int i=0;i<link.size();i=i+1){
-                                Videos videos=new Videos();
-                                String temp=link.get(i).text();
-                                String video_id=temp.substring(temp.indexOf("?v=")+3);
-                                videos.setVideo_title(Jsoup.parse(titles.get(i).text(),"UTF-8").text());
-                                videos.setVideo_id(video_id);
-                                videos.setImage_url_path("https://youtube-withoutfilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/mqdefault.jpg");
-                                videos.setVideo_duration(times.get(i).text());
-                                videosList.add(videos);
+                            for(int i=0;i<divs.size();i=i+1){
+                                if(divs.get(i).select("div[class=rc]").select("div[class=s]").select("div").hasClass("th N3nEGc i0PvJb")){
+                                    Videos videos=new Videos();
+                                    String title=divs.get(i).select("div[class=rc]").select("div[class=r]").select("a").select("h3").text();
+                                    String temp=divs.get(i).select("div[class=rc]").select("div[class=r]").select("a").select("div[class=TbwUpd]").text();
+                                    String duration=divs.get(i).select("div[class=rc]").select("div[class=s]").select("div").select("div[class=th N3nEGc i0PvJb]").select("a").select("span[class=vdur mWTy7c]").text();
+                                    videos.setVideo_title(title);
+                                    String video_id=temp.substring(temp.indexOf("?v=")+3);
+                                    videos.setVideo_id(video_id);
+                                    videos.setImage_url_path("https://youtube-withoutfilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/mqdefault.jpg");
+                                    videos.setVideo_duration(duration);
+                                    videosList.add(videos);
+                                }
                             }
                             videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
                             recyclerView.setAdapter(videoListAdapter);
