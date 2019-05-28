@@ -1,6 +1,7 @@
 package com.javadi.youtube;
 
 import android.app.ProgressDialog;
+import android.app.usage.UsageEvents;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     static List<Videos> videosList=new ArrayList<>();
     ProgressDialog progressDialog;
     //for distribute servers
-    int distributed=0;
+    static int distributed=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +66,10 @@ public class MainActivity extends AppCompatActivity {
         etSearch.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(keyCode==KeyEvent.KEYCODE_ENTER){
+                if(keyCode==KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP){
                     search(0);
                     hideKeyboard();
+                    return true;
                 }
                 return false;
             }
@@ -92,12 +94,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void search(final int s){
-        if(s==0){
-            videosList.clear();
-            videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
-            recyclerView.setAdapter(videoListAdapter);
-        }
         if(!etSearch.getText().toString().equals("")){
+            if(s==0){
+                videosList.clear();
+                videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
+                recyclerView.setAdapter(videoListAdapter);
+            }
             if(distributed==0){
                 try {
                     jsoupRequestVideoInfo(URLEncoder.encode(etSearch.getText().toString(),"UTF-8"),s);
@@ -120,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 
     public void jsoupRequestVideoInfo(final String query,final int s){
         new Thread(){
