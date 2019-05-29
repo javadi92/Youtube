@@ -1,9 +1,11 @@
 package com.javadi.youtube;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.MediaController;
@@ -31,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
 import java.util.Random;
 
 //import com.javadi.youtube.server.VolleyRequest;
@@ -42,7 +47,6 @@ public class PlayActivity extends AppCompatActivity {
     //public static VideoView videoView;
     //public static MediaController videoMediaController;
     public static ProgressDialog progressDialog2;
-    int distributed=0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,7 +55,8 @@ public class PlayActivity extends AppCompatActivity {
 
         mView = new CatLoadingView();
         mView.setCanceledOnTouchOutside(false);
-        mView.setText("");
+        mView.setText("> > > > > > > > > > > > > > > ");
+        mView.setShowsDialog(false);
         mView.show(getSupportFragmentManager(), "");
         //progressDialog2 = new ProgressDialog(this);
         //progressDialog2.setMessage("در حال دریافت اطلاعات ...");
@@ -71,7 +76,16 @@ public class PlayActivity extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setBuiltInZoomControls(true);
+        //increase speed performance of webview
         webView.getSettings().setSaveFormData(true);
+        webView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+        webView.getSettings().setUseWideViewPort(true);
+        webView.getSettings().setEnableSmoothTransition(true);
+
+
 
         /*videoView=(VideoView)findViewById(R.id.videoView);
 
@@ -80,24 +94,34 @@ public class PlayActivity extends AppCompatActivity {
         //videoMediaController.setMediaPlayer(videoView);
         videoView.setMediaController(videoMediaController);
         videoView.requestFocus();*/
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             // chromium, enable hardware acceleration
             webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         } else {
             // older android version, disable hardware acceleration
             webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        }
+        }*/
 
         String video_id=getIntent().getStringExtra("video_id");
         //new VolleyRequest(this).requestVideoStream(video_id);
 
-        if(distributed==0){
+        //distribute loade on servers base on hour time
+        Calendar calendar = Calendar.getInstance();
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        if(currentHour>=0 && currentHour<12){
             requestVideoStream(video_id);
-            distributed=1;
+            //Toast.makeText(PlayActivity.this,currentHour+"",Toast.LENGTH_LONG).show();
         }
-        else if(distributed==1){
+        else if(currentHour>=12 && currentHour<24){
             requestVideoStream2(video_id);
-            distributed=0;
+            //Toast.makeText(PlayActivity.this,currentHour+"",Toast.LENGTH_LONG).show();
+        }
+
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            webView.getLayoutParams().height= ViewGroup.LayoutParams.MATCH_PARENT;
         }
 
 
@@ -167,5 +191,23 @@ public class PlayActivity extends AppCompatActivity {
                         progressDialog2.dismiss();
                     }
                 });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        webView.destroy();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        webView.destroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
     }
 }

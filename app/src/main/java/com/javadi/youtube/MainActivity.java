@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     static List<Videos> videosList=new ArrayList<>();
     ProgressDialog progressDialog;
     //for distribute servers
-    static int distributed=0;
+    public static int distributed=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
                 recyclerView.setAdapter(videoListAdapter);
             }
-            if(distributed==0){
+            //if(distributed==0){
                 try {
                     jsoupRequestVideoInfo(URLEncoder.encode(etSearch.getText().toString(),"UTF-8"),s);
                     progressDialog.setMessage("در حال دریافت اطلاعات ...");
@@ -108,9 +108,9 @@ public class MainActivity extends AppCompatActivity {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                distributed=1;
-            }
-            else if(distributed==1){
+                //distributed=1;
+            //}
+            /*else if(distributed==1){
                 try {
                     jsoupRequestVideoInfo2(URLEncoder.encode(etSearch.getText().toString(),"UTF-8"),s);
                     progressDialog.setMessage("در حال دریافت اطلاعات ...");
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 distributed=0;
-            }
+            }*/
         }
     }
 
@@ -145,7 +145,8 @@ public class MainActivity extends AppCompatActivity {
                                     videos.setVideo_title(title);
                                     String video_id=temp.substring(temp.indexOf("?v=")+3);
                                     videos.setVideo_id(video_id);
-                                    videos.setImage_url_path("https://antifilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/mqdefault.jpg");
+                                    //videos.setImage_url_path("https://antifilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/mqdefault.jpg");
+                                    videos.setImage_url_path("http://javadimehr.ir/?id="+video_id);
                                     videos.setVideo_duration(duration);
                                     videosList.add(videos);
                                 }
