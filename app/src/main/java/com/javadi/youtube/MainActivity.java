@@ -7,11 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import com.javadi.youtube.adapters.LazyLoadAdapter;
 import com.javadi.youtube.adapters.VideoListAdapter;
 import com.javadi.youtube.models.Videos;
@@ -157,8 +160,16 @@ public class MainActivity extends AppCompatActivity {
                             progressDialog.dismiss();
                         }
                     });
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     e.printStackTrace();
+                    Log.e("error1",e.getMessage());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this,"خطا در برقراری ارتباط، لطفا بعدا وارد شوید",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    progressDialog.dismiss();
                 }
             }
         }.start();
@@ -197,8 +208,16 @@ public class MainActivity extends AppCompatActivity {
                             progressDialog.dismiss();
                         }
                     });
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     e.printStackTrace();
+                    Log.e("error2",e.getMessage());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this,"خطا در برقراری ارتباط، لطفا بعدا وارد شوید",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    progressDialog.dismiss();
                 }
             }
         }.start();
