@@ -20,11 +20,13 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.mVie
 
     List<Videos> videosList =new ArrayList<>();
     Context mContext;
+    Picasso picasso;
 
 
-    public VideoListAdapter(Context context,List<Videos> videosList){
+    public VideoListAdapter(Context context,List<Videos> videosList,Picasso picasso){
         this.mContext=context;
         this.videosList = videosList;
+        this.picasso=picasso;
     }
 
 
@@ -37,7 +39,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.mVie
 
     @Override
     public void onBindViewHolder(@NonNull mViewHolder mViewHolder, final int i) {
-        Picasso.get().load(videosList.get(i).getImage_url_path()).fit().centerInside().into(mViewHolder.imgVideoholder);
+        picasso.get().load(videosList.get(i).getImage_url_path()).fit().centerInside().into(mViewHolder.imgVideoholder);
         //Glide.with(mContext).load(videosList.get(i).getImage_url_path()).into(mViewHolder.imgVideoholder);
         mViewHolder.tvVideoHolderTitle.setText(videosList.get(i).getVideo_title());
         mViewHolder.tvDuration.setText(videosList.get(i).getVideo_duration());

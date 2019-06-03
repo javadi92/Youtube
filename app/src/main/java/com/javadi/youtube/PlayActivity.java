@@ -1,42 +1,26 @@
 package com.javadi.youtube;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.MediaController;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.androidnetworking.interfaces.StringRequestListener;
-import com.javadi.youtube.adapters.VideoListAdapter;
-import com.javadi.youtube.models.Videos;
 import com.roger.catloadinglibrary.CatLoadingView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Calendar;
-import java.util.Random;
 
 //import com.javadi.youtube.server.VolleyRequest;
 
@@ -109,12 +93,15 @@ public class PlayActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
 
-        if(currentHour>=0 && currentHour<12){
+        if(currentHour>=0 && currentHour<8){
             requestVideoStream(video_id);
             //Toast.makeText(PlayActivity.this,currentHour+"",Toast.LENGTH_LONG).show();
         }
-        else if(currentHour>=12 && currentHour<24){
+        else if(currentHour>=8 && currentHour<16){
             requestVideoStream2(video_id);
+        }
+        else if(currentHour>=16 && currentHour<24){
+            requestVideoStream3(video_id);
             //Toast.makeText(PlayActivity.this,currentHour+"",Toast.LENGTH_LONG).show();
         }
 
@@ -181,6 +168,29 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     private void requestVideoStream2(String query){
+        final String url="https://fetchurls2.herokuapp.com/?id=";
+        AndroidNetworking.get(url+query)
+                .setPriority(Priority.LOW)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.equals("error")){
+                            Toast.makeText(PlayActivity.this,"خطا در بارگذاری ویدئو",Toast.LENGTH_LONG).show();
+                        }
+                        else{
+                            webView.loadUrl("https://antifilter2.herokuapp.com/?q="+response);
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        progressDialog2.dismiss();
+                    }
+                });
+    }
+
+    private void requestVideoStream3(String query){
         final String url="https://url-fetch.herokuapp.com/?id=";
         AndroidNetworking.get(url+query)
                 .setPriority(Priority.LOW)

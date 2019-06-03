@@ -18,6 +18,8 @@ import android.widget.Toast;
 import com.javadi.youtube.adapters.LazyLoadAdapter;
 import com.javadi.youtube.adapters.VideoListAdapter;
 import com.javadi.youtube.models.Videos;
+import com.squareup.picasso.Picasso;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     //views
     ImageView imgSearch;
+    Picasso picasso;
     EditText etSearch;
     RecyclerView recyclerView;
     static VideoListAdapter videoListAdapter;
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         //init views
         imgSearch=(ImageView)findViewById(R.id.img_search);
         etSearch=(EditText)findViewById(R.id.et_search);
+        picasso=Picasso.get();
         recyclerView=(RecyclerView)findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -100,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         if(!etSearch.getText().toString().equals("")){
             if(s==0){
                 videosList.clear();
-                videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
+                videoListAdapter=new VideoListAdapter(MainActivity.this,videosList,picasso);
                 recyclerView.setAdapter(videoListAdapter);
             }
             //if(distributed==0){
@@ -154,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                                     videosList.add(videos);
                                 }
                             }
-                            videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
+                            videoListAdapter=new VideoListAdapter(MainActivity.this,videosList,picasso);
                             recyclerView.setAdapter(videoListAdapter);
                             recyclerView.scrollToPosition(videosList.size()-10);
                             progressDialog.dismiss();
@@ -202,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                                     videosList.add(videos);
                                 }
                             }
-                            videoListAdapter=new VideoListAdapter(MainActivity.this,videosList);
+                            videoListAdapter=new VideoListAdapter(MainActivity.this,videosList,picasso);
                             recyclerView.setAdapter(videoListAdapter);
                             recyclerView.scrollToPosition(videosList.size()-10);
                             progressDialog.dismiss();
