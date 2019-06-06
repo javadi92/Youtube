@@ -152,7 +152,8 @@ public class PlayActivity extends AppCompatActivity {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        if(response.equals("error") || response.equals("") || response.equals(null)){
+                        webView.loadUrl(response);
+                        /*if(response.equals("error") || response.equals("") || response.equals(null)){
                             webView.loadUrl("https://antifilter.herokuapp.com/?q=https://prx3.genmirror.com/embed/embed.php?vid="+query);
                             //https://sitenable.asia
                             //Toast.makeText(PlayActivity.this,"خطا در بارگذاری ویدئو",Toast.LENGTH_LONG).show();
@@ -161,7 +162,7 @@ public class PlayActivity extends AppCompatActivity {
                         }
                         else{
                             webView.loadUrl("https://antifilter.herokuapp.com/?q="+response);
-                        }
+                        }*/
                     }
 
                     @Override
@@ -179,7 +180,8 @@ public class PlayActivity extends AppCompatActivity {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        if(response.equals("error") || response.equals("") || response.equals(null)){
+                        webView.loadUrl(response);
+                        /*if(response.equals("error") || response.equals("") || response.equals(null)){
                             webView.loadUrl("https://antifilter2.herokuapp.com/?q=https://prx3.genmirror.com/embed/embed.php?vid="+query);
                             //https://sitenable.asia
                             //Toast.makeText(PlayActivity.this,"خطا در بارگذاری ویدئو",Toast.LENGTH_LONG).show();
@@ -188,7 +190,7 @@ public class PlayActivity extends AppCompatActivity {
                         }
                         else{
                             webView.loadUrl("https://antifilter2.herokuapp.com/?q="+response);
-                        }
+                        }*/
                     }
 
                     @Override
@@ -206,7 +208,8 @@ public class PlayActivity extends AppCompatActivity {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        if(response.equals("error") || response.equals("") || response.equals(null)){
+                        webView.loadUrl(response);
+                        /*if(response.equals("error") || response.equals("") || response.equals(null)){
                             webView.loadUrl("https://youtube-withoutfilter.herokuapp.com/index.php?q=https://prx3.genmirror.com/embed/embed.php?vid="+query);
                             //https://sitenable.asia
                             //Toast.makeText(PlayActivity.this,"خطا در بارگذاری ویدئو",Toast.LENGTH_LONG).show();
@@ -215,7 +218,7 @@ public class PlayActivity extends AppCompatActivity {
                         }
                         else{
                             webView.loadUrl("https://youtube-withoutfilter.herokuapp.com/index.php?q="+response);
-                        }
+                        }*/
                     }
 
                     @Override
