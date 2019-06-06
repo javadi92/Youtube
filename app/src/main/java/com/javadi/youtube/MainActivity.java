@@ -1,7 +1,6 @@
 package com.javadi.youtube;
 
 import android.app.ProgressDialog;
-import android.app.usage.UsageEvents;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -115,18 +114,6 @@ public class MainActivity extends AppCompatActivity {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                //distributed=1;
-            //}
-            /*else if(distributed==1){
-                try {
-                    jsoupRequestVideoInfo2(URLEncoder.encode(etSearch.getText().toString(),"UTF-8"),s);
-                    progressDialog.setMessage("در حال دریافت اطلاعات ...");
-                    progressDialog.show();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                distributed=0;
-            }*/
         }
     }
 
@@ -138,7 +125,10 @@ public class MainActivity extends AppCompatActivity {
                 String url = "https://www.google.com/search?q="+query+"+site:youtube.com&tbm=vid&start="+s;
                 Document document = null;
                 try {
-                    document = Jsoup.connect(url).get();
+                    document = Jsoup
+                            .connect(url)
+                            .userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0")
+                            .get();
                     final Elements divs=document.select("div[class=g]");
                     runOnUiThread(new Runnable() {
                         @Override
@@ -152,8 +142,7 @@ public class MainActivity extends AppCompatActivity {
                                     videos.setVideo_title(title);
                                     String video_id=temp.substring(temp.indexOf("?v=")+3);
                                     videos.setVideo_id(video_id);
-                                    //videos.setImage_url_path("https://antifilter.herokuapp.com/?q=https://img.youtube.com/vi/"+video_id+"/mqdefault.jpg");
-                                    videos.setImage_url_path("http://javadimehr.ir/?id="+video_id);
+                                    videos.setImage_url_path("http://javadimehr.ir/mini/?id="+video_id);
                                     videos.setVideo_duration(duration);
                                     videosList.add(videos);
                                 }
@@ -170,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this,"خطا در برقراری ارتباط، لطفا بعدا وارد شوید",Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this,"خطا در برقراری ارتباط، لطفا از طریق گوگل کروم اقدام کنید",Toast.LENGTH_LONG).show();
                         }
                     });
                     progressDialog.dismiss();
@@ -178,6 +167,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }.start();
     }
+
+    //9m3usPP0ZoH1QyYW1LuNvE1hjq0XgdQn9IpnnoLucV5hhuQRl0KNxQ7V4T%2Fk7b7zmCJY8H0Sj%2Ff43fO7egUn6g%3D%3D&b=7
 
     public void jsoupRequestVideoInfo2(final String query,final int s){
         new Thread(){

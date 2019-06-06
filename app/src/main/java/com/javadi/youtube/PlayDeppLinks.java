@@ -78,12 +78,14 @@ public class PlayDeppLinks extends AppCompatActivity {
         int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
 
         video_id=video_id.substring(2);
-        if(currentHour>=0 && currentHour<12){
+        if(currentHour>=0 && currentHour<8){
             requestVideoStream(video_id);
-            //Toast.makeText(PlayActivity.this,currentHour+"",Toast.LENGTH_LONG).show();
         }
-        else if(currentHour>=12 && currentHour<24){
+        else if(currentHour>=8 && currentHour<16){
             requestVideoStream2(video_id);
+        }
+        else if(currentHour>=16 && currentHour<24){
+            requestVideoStream3(video_id);
             //Toast.makeText(PlayActivity.this,currentHour+"",Toast.LENGTH_LONG).show();
         }
 
@@ -117,8 +119,10 @@ public class PlayDeppLinks extends AppCompatActivity {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        if(response.equals("error")){
-                            //Toast.makeText(PlayActivity.this,"خطا در بارگذاری ویدئو",Toast.LENGTH_LONG).show();
+                        if(response.equals("error") || response.equals("") || response.equals(null)){
+                            Toast.makeText(PlayDeppLinks.this,"خطا در بارگذاری ویدئو",Toast.LENGTH_LONG).show();
+                            webView.destroy();
+                            PlayDeppLinks.this.finish();;
                         }
                         else{
                             webView.loadUrl("https://antifilter.herokuapp.com/?q="+response);
@@ -133,6 +137,31 @@ public class PlayDeppLinks extends AppCompatActivity {
     }
 
     private void requestVideoStream2(String query){
+        final String url="https://fetchurls2.herokuapp.com/?id=";
+        AndroidNetworking.get(url+query)
+                .setPriority(Priority.LOW)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.equals("error") || response.equals("") || response.equals(null)){
+                            Toast.makeText(PlayDeppLinks.this,"خطا در بارگذاری ویدئو",Toast.LENGTH_LONG).show();
+                            webView.destroy();
+                            PlayDeppLinks.this.finish();;
+                        }
+                        else{
+                            webView.loadUrl("https://antifilter2.herokuapp.com/?q="+response);
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        progressDialog2.dismiss();
+                    }
+                });
+    }
+
+    private void requestVideoStream3(String query){
         final String url="https://url-fetch.herokuapp.com/?id=";
         AndroidNetworking.get(url+query)
                 .setPriority(Priority.LOW)
@@ -140,8 +169,10 @@ public class PlayDeppLinks extends AppCompatActivity {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        if(response.equals("error")){
-                            //Toast.makeText(PlayActivity.this,"خطا در بارگذاری ویدئو",Toast.LENGTH_LONG).show();
+                        if(response.equals("error") || response.equals("") || response.equals(null)){
+                            Toast.makeText(PlayDeppLinks.this,"خطا در بارگذاری ویدئو",Toast.LENGTH_LONG).show();
+                            webView.destroy();
+                            PlayDeppLinks.this.finish();;
                         }
                         else{
                             webView.loadUrl("https://antifilter.herokuapp.com/?q="+response);
