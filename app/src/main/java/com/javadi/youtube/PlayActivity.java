@@ -1,13 +1,16 @@
 package com.javadi.youtube;
 
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -37,6 +40,7 @@ public class PlayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mView = new CatLoadingView();
         mView.setCanceledOnTouchOutside(false);
         mView.setText("> > > > > > > > > > > > > > > ");
@@ -47,6 +51,7 @@ public class PlayActivity extends AppCompatActivity {
         //progressDialog2.show();
 
         webView = (WebView) findViewById(R.id.web_view);
+        webView.getSettings().getAllowFileAccess();
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -55,6 +60,17 @@ public class PlayActivity extends AppCompatActivity {
                 mView.dismiss();
             }
 
+        });
+        webView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                DownloadManager.Request request=new DownloadManager.Request(Uri.parse(url));
+                request.allowScanningByMediaScanner();
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                DownloadManager downloadManager= (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                downloadManager.enqueue(request);
+                Toast.makeText(PlayActivity.this,"در حال دانلود ویدئو ...",Toast.LENGTH_LONG).show();
+            }
         });
         webView.setWebChromeClient(new WebChromeClient());
         webView.getSettings().setJavaScriptEnabled(true);
@@ -86,7 +102,8 @@ public class PlayActivity extends AppCompatActivity {
             webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }*/
 
-        String video_id=getIntent().getStringExtra("video_id");
+        String video_id=getIntent().getStringExtra("video_id_2");
+        Toast.makeText(PlayActivity.this,video_id+"",Toast.LENGTH_LONG).show();
         //new VolleyRequest(this).requestVideoStream(video_id);
 
         //distribute loade on servers base on hour time

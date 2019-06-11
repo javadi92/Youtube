@@ -36,6 +36,7 @@ public class PlayDeppLinks extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.deep_links);
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mView = new CatLoadingView();
         mView.setCanceledOnTouchOutside(false);
         mView.setText("> > > > > > > > > > > > > > > ");
@@ -119,14 +120,15 @@ public class PlayDeppLinks extends AppCompatActivity {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        if(response.equals("error") || response.equals("") || response.equals(null)){
+                        webView.loadUrl(response);
+                        /*if(response.equals("error") || response.equals("") || response.equals(null)){
                             Toast.makeText(PlayDeppLinks.this,"خطا در بارگذاری ویدئو",Toast.LENGTH_LONG).show();
                             webView.destroy();
                             PlayDeppLinks.this.finish();;
                         }
                         else{
                             webView.loadUrl("https://antifilter.herokuapp.com/?q="+response);
-                        }
+                        }*/
                     }
 
                     @Override
@@ -144,14 +146,15 @@ public class PlayDeppLinks extends AppCompatActivity {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        if(response.equals("error") || response.equals("") || response.equals(null)){
+                        webView.loadUrl(response);
+                        /*if(response.equals("error") || response.equals("") || response.equals(null)){
                             Toast.makeText(PlayDeppLinks.this,"خطا در بارگذاری ویدئو",Toast.LENGTH_LONG).show();
                             webView.destroy();
                             PlayDeppLinks.this.finish();;
                         }
                         else{
                             webView.loadUrl("https://antifilter2.herokuapp.com/?q="+response);
-                        }
+                        }*/
                     }
 
                     @Override
@@ -169,14 +172,15 @@ public class PlayDeppLinks extends AppCompatActivity {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        if(response.equals("error") || response.equals("") || response.equals(null)){
+                        webView.loadUrl(response);
+                        /*if(response.equals("error") || response.equals("") || response.equals(null)){
                             Toast.makeText(PlayDeppLinks.this,"خطا در بارگذاری ویدئو",Toast.LENGTH_LONG).show();
                             webView.destroy();
                             PlayDeppLinks.this.finish();;
                         }
                         else{
                             webView.loadUrl("https://antifilter.herokuapp.com/?q="+response);
-                        }
+                        }*/
                     }
 
                     @Override

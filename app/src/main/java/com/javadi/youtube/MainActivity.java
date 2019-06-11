@@ -14,7 +14,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.javadi.youtube.adapters.LazyLoadAdapter;
 import com.javadi.youtube.adapters.VideoListAdapter;
 import com.javadi.youtube.models.Videos;
 import com.squareup.picasso.Picasso;
@@ -37,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
     EditText etSearch;
     RecyclerView recyclerView;
     static VideoListAdapter videoListAdapter;
-    LazyLoadAdapter lazyLoadAdapter;
     static List<Videos> videosList=new ArrayList<>();
     ProgressDialog progressDialog;
     //for distribute servers
@@ -139,7 +137,14 @@ public class MainActivity extends AppCompatActivity {
                                     String title=divs.get(i).select("div[class=rc]").select("div[class=r]").select("a").select("h3").text();
                                     String temp=divs.get(i).select("div[class=rc]").select("div[class=r]").select("a").select("div[class=TbwUpd]").text();
                                     String duration=divs.get(i).select("div[class=rc]").select("div[class=s]").select("div").select("div[class=th N3nEGc i0PvJb]").select("a").select("span[class=vdur mWTy7c]").text();
-                                    videos.setVideo_title(title);
+                                    if(title.contains("- YouTube")){
+                                        int end=title.indexOf("- YouTube");
+                                        String tit=title.substring(0,end);
+                                        videos.setVideo_title(tit);
+                                    }
+                                    else {
+                                        videos.setVideo_title(title);
+                                    }
                                     String video_id=temp.substring(temp.indexOf("?v=")+3);
                                     videos.setVideo_id(video_id);
                                     videos.setImage_url_path("http://javadimehr.ir/mini/?id="+video_id);
